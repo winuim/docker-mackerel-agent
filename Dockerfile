@@ -29,7 +29,7 @@ COPY --from=builder /etc/mackerel-agent /etc/mackerel-agent
 
 WORKDIR /app
 COPY . /app
-RUN apk add --no-cache bash tzdata \
+RUN apk add --no-cache bash coreutils iproute2 tzdata \
     && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
     && echo "Asia/Tokyo" > /etc/timezone \
     && chmod +x ./entrypoint.sh
