@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  mackerel-agent:
+    image: winuim/mackerel-agent
+    build: 
+      context: .
+    container_name: mackerel-agent
+    environment:
+      - MACKEREL_APIKEY
+    hostname: "raspberrypi"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/mackerel-agent/:/var/lib/mackerel-agent/
+    stdin_open: true
+    tty: true
