@@ -1,8 +1,9 @@
-FROM golang:latest as builder
+FROM golang:alpine as builder
 
 LABEL maintainer="Yohei Uema <winuim@gmail.com>"
 
-RUN go get -d -v github.com/mackerelio/mackerel-agent \
+RUN apk add --no-cache gcc git make musl-dev \
+    && go get -d -v github.com/mackerelio/mackerel-agent \
     && cd $GOPATH/src/github.com/mackerelio/mackerel-agent \
     && make build \
     && cp ./build/mackerel-agent $GOPATH/bin/ \
@@ -22,13 +23,16 @@ RUN go get -d -v github.com/mackerelio/mackerel-agent \
     && make build \
     && cp ./mkr $GOPATH/bin/
 
-FROM golang:latest as runner
+FROM golang:alpine as runner
 COPY --from=builder /go/bin /go/bin
 COPY --from=builder /etc/mackerel-agent /etc/mackerel-agent
 
 WORKDIR /app
 COPY . /app
-RUN chmod +x ./entrypoint.sh
+RUN apk add --no-cache bash tzdata \
+    && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    && echo "Asia/Tokyo" > /etc/timezone \
+    && chmod +x ./entrypoint.sh
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 CMD [ "run" ]
