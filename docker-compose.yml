@@ -12,5 +12,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/lib/mackerel-agent/:/var/lib/mackerel-agent/
+    network_mode: "host"
     stdin_open: true
     tty: true
